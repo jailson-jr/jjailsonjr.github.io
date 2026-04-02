@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Flow Method, Language Field Manual by Jailson Jr</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #f9f6f0;
+    --accent: #c0392b;
+    --muted: #888;
+    --light-rule: #e0dbd3;
+    --chapter-bg: #f2ede5;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.75; font-weight: 300; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.9rem 3rem; background: var(--paper);
+    border-bottom: 1px solid var(--light-rule); backdrop-filter: blur(6px);
+  }
+  .nav-logo { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: var(--muted); transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+
+  .lang-switcher { display: flex; gap: 0.4rem; align-items: center; }
+  .lang-btn {
+    font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid var(--light-rule); background: transparent; color: var(--muted);
+    padding: 0.3rem 0.65rem; cursor: pointer; transition: all 0.25s; border-radius: 0;
+    display: flex; align-items: center; gap: 0.35rem; position: relative; overflow: hidden;
+  }
+  .lang-btn .flag { font-size: 0.95rem; opacity: 0.3; transition: opacity 0.25s; line-height: 1; }
+  .lang-btn:hover .flag { opacity: 0.75; }
+  .lang-btn.active .flag { opacity: 1; }
+  .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .lang-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .lang-btn.active:hover { color: var(--paper); }
+
+  .hero {
+    min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 6rem 5rem; border-bottom: 1px solid var(--light-rule); position: relative; overflow: hidden;
+  }
+  .hero-number { position: absolute; top: 8rem; right: 5rem; font-family: var(--serif); font-size: 22vw; font-weight: 900; color: var(--light-rule); line-height: 1; pointer-events: none; user-select: none; }
+  .hero-eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem; }
+  .hero h1 { font-family: var(--serif); font-size: clamp (3rem, 7vw, 7rem); font-weight: 900; line-height: 1.0; max-width: 14ch; margin-bottom: 2rem; }
+  .hero h1 em { font-style: italic; font-weight: 400; }
+  .hero-sub { font-family: var(--sans); font-size: 1rem; color: var(--muted); max-width: 55ch; font-weight: 300; margin-bottom: 3rem; line-height: 1.7; }
+  .hero-meta { display: flex; gap: 3rem; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); border-top: 1px solid var(--light-rule); padding-top: 1.5rem; }
+  .hero-meta span strong { display: block; color: var(--ink); font-weight: 500; margin-bottom: 0.2rem; }
+
+  .section { max-width: 780px; margin: 0 auto; padding: 6rem 2rem; border-bottom: 1px solid var(--light-rule); }
+  .chapter-label { display: flex; align-items: center; gap: 1rem; margin-bottom: 2.5rem; }
+  .chapter-num { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; }
+  .chapter-rule { flex: 1; height: 1px; background: var(--light-rule); }
+
+  h2 { font-family: var(--serif); font-size: clamp (2rem, 4vw, 3.2rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; }
+  h2 em { font-style: italic; font-weight: 400; }
+  h3 { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.8rem; }
+  p { margin-bottom: 1.2rem; }
+
+  .callout { background: var(--chapter-bg); border-left: 3px solid var(--accent); padding: 1.5rem 2rem; margin: 2.5rem 0; font-family: var(--serif); font-style: italic; font-size: 1.1rem; line-height: 1.65; }
+  .callout cite { display: block; margin-top: 0.8rem; font-family: var(--mono); font-style: normal; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+  .theory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 2.5rem 0; }
+  .theory-card { background: var(--chapter-bg); padding: 1.8rem; border: 1px solid var(--light-rule); }
+  .theory-card .label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .theory-card h4 { font-family: var(--serif); font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .theory-card p { font-size: 0.9rem; margin-bottom: 0; }
+
+  .steps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin: 2.5rem 0; }
+  .step { background: var(--chapter-bg); padding: 2.5rem; border: 1px solid var(--light-rule); transition: background 0.2s; }
+  .step:hover { background: #ece7dd; }
+  .step-number { font-family: var(--serif); font-size: 4rem; font-weight: 900; color: var(--light-rule); line-height: 1; margin-bottom: 1rem; }
+  .step h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 700; margin-top: 0; margin-bottom: 0.7rem; color: var(--ink); }
+  .step p { font-size: 0.9rem; margin-bottom: 0; }
+
+  .cefr-list { margin: 2rem 0; }
+  .cefr-item { display: grid; grid-template-columns: 3rem 1fr; gap: 1.5rem; align-items: start; padding: 1.2rem 0; border-bottom: 1px solid var(--light-rule); }
+  .cefr-badge { font-family: var(--mono); font-size: 0.75rem; font-weight: 500; color: var(--paper); background: var(--ink); padding: 0.3rem 0.4rem; text-align: center; margin-top: 0.2rem; }
+  .cefr-badge.advanced { background: var(--accent); }
+  .cefr-desc { font-size: 0.95rem; }
+  .cefr-desc strong { font-weight: 500; }
+
+  .tools-grid { display: grid; grid-template-columns: repeat (3, 1fr); gap: 1.5rem; margin: 2.5rem 0; }
+  .tool-card { border: 1px solid var(--light-rule); padding: 1.8rem; transition: border-color 0.2s, transform 0.2s; }
+  .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .tool-icon { font-size: 1.5rem; margin-bottom: 0.8rem; }
+  .tool-card h4 { font-family: var(--serif); font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+  .tool-card p { font-size: 0.85rem; color: #555; margin: 0; }
+
+  .concept-highlight { display: grid; grid-template-columns: 1fr 3px 1fr; gap: 0 2.5rem; margin: 3rem 0; align-items: start; }
+  .concept-divider { background: var(--light-rule); margin-top: 0.5rem; align-self: stretch; }
+  .concept h3 { font-family: var(--serif); font-size: 1.3rem; font-weight: 900; margin-top: 0; margin-bottom: 0.6rem; }
+  .concept .tag { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; display: block; }
+  .concept p { font-size: 0.92rem; }
+
+  .tips { margin: 1.5rem 0; }
+  .tip { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--light-rule); align-items: start; font-size: 0.95rem; }
+  .tip-marker { font-family: var(--mono); font-size: 0.6rem; color: var(--accent); padding-top: 0.35rem; flex-shrink: 0; width: 2rem; }
+
+  .feynman-steps { counter-reset: feynman; margin: 2rem 0; }
+  .feynman-step { display: flex; gap: 2rem; margin-bottom: 1.5rem; align-items: start; }
+  .feynman-step::before { counter-increment: feynman; content: "0" counter (feynman); font-family: var(--mono); font-size: 0.7rem; color: var(--accent); padding-top: 0.2rem; flex-shrink: 0; width: 2.5rem; }
+  .feynman-step p { margin: 0; font-size: 0.95rem; }
+  .feynman-step strong { font-weight: 500; }
+
+  .big-quote { font-family: var(--serif); font-size: clamp (1.5rem, 3vw, 2.2rem); font-style: italic; font-weight: 400; line-height: 1.4; color: var(--ink); padding: 3rem 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); margin: 3rem 0; max-width: 34ch; }
+
+  footer { padding: 4rem 6rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 700px) {
+    nav { padding: 0.8rem 1.2rem; }
+    .nav-links { display: none; }
+    .hero { padding: 0 1.5rem 3.5rem; }
+    .hero-number { font-size: 40vw; right: 0; }
+    .section { padding: 4rem 1.5rem; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .theory-grid { grid-template-columns: 1fr; }
+    .tools-grid { grid-template-columns: 1fr 1fr; }
+    .concept-highlight { grid-template-columns: 1fr; }
+    .concept-divider { display: none; }
+    footer { flex-direction: column; gap: 1rem; padding: 3rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">Jailson Jr's, The Flow Method</span>
+  <ul class="nav-links">
+    <li><a href="#intro" data-key="nav_origin">Origin</a></li>
+    <li><a href="#theory" data-key="nav_theory">Theory</a></li>
+    <li><a href="#four-steps" data-key="nav_steps">4 Steps</a></li>
+    <li><a href="#concepts" data-key="nav_concepts">Concepts</a></li>
+    <li><a href="#tools" data-key="nav_tools">Tools</a></li>
+    <li><a href="#output" data-key="nav_output">Output</a></li>
+  </ul>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang ('en')" id="btn-en"><span class="flag">🇺🇸</span>EN</button>
+    <button class="lang-btn" onclick="setLang ('pt')" id="btn-pt"><span class="flag">🇧🇷</span>PT</button>
+    <button class="lang-btn" onclick="setLang ('es')" id="btn-es"><span class="flag">🇪🇸</span>ES</button>
+  </div>
+</nav>
+
+<section class="hero" id="top">
+  <div class="hero-number" aria-hidden="true">改</div>
+  <p class="hero-eyebrow" data-key="hero_eyebrow">Field Manual, Second Edition</p>
+  <h1 data-key="hero_h1">The Language <em>Acquisition</em> Manual</h1>
+  <p class="hero-sub" data-key="hero_sub">A practical, no-nonsense guide to becoming fluent in any language, built from years of obsessive experimentation and updated with everything that came after. The Flow Method. No green owls were harmed in the making of this document.</p>
+  <div class="hero-meta">
+    <span><strong data-key="meta_author_label">Author</strong>Jailson Júnior</span>
+    <span><strong data-key="meta_edition_label">Edition</strong>2026, Updated</span>
+    <span><strong data-key="meta_target_label">Target</strong> <span data-key="meta_target_val">Any Language</span></span>
+  </div>
+</section>
+
+<section class="section reveal" id="intro">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c00_label">🕸️ 00: Origin Story</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c00_h2">It Started With a Subtitle I Didn't Need</h2>
+  <p data-key="c00_p1">One evening I was watching my favourite series when I caught myself understanding a complex sentence in a foreign language without reading the subtitles. This was surprising for a number of reasons, the main one being that, up until that moment, I had firmly believed my foreign language skills topped out at <em>"I love you"</em> and <em>"Run Barry, run."</em></p>
+  <p data-key="c00_p2">What had happened? I had been consuming hours of English content (YouTube, series, films) mostly for fun, partly out of curiosity. Language apps. Grammar videos in Portuguese. All useful up to a point. But that point was somewhere around <em>"functional tourist"</em>, not <em>"person who thinks in another language while brushing their teeth."</em></p>
+  <p data-key="c00_p3">The breakthrough came not from studying harder, but from consuming more, the right way. Eleven months after starting, in 2017, I had my first real conversation with a native speaker. Not perfect. Not elegant. But twenty minutes of actual communication, which is more than most babies manage at eleven months, and they have the advantage of having the whole day to practice, because they are, obviously, unemployed.</p>
+  <p data-key="c00_p4">A few months later, things that once seemed impossible (watching films without subtitles, following podcasts at 2x speed)had become routine. That's when I found the work of Dr. Stephen Krashen and realised there was actually a name for what I had stumbled into.</p>
+  <div class="callout">"<span data-key="c00_callout">You don't learn a language. You get used to it.</span>"<cite data-key="c00_cite">the conclusion this whole guide is working towards</cite></div>
+  <p data-key="c00_p5">This manual is the distilled, updated version of that process, expanded with what I've learned since, and supplemented by the latest research in second language acquisition (SLA). It applies to any language, regardless of your native tongue. The only prerequisites are a working internet connection and the willingness to occasionally feel slightly lost, which, as you'll see, is a feature, not a bug.</p>
+</section>
+
+<section class="section reveal" id="theory">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c01_label">🤓 01: The Science (Briefly)</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c01_h2">Why School <em>Didn't</em> Work</h2>
+  <p data-key="c01_p1">In the 1980s, linguist Stephen Krashen proposed something that annoyed a great many grammar teachers: that language is <em>acquired</em>, not learned. That the route to fluency runs through massive exposure to comprehensible content (material you mostly understand, with a sliver of the new)not through memorising conjugation tables until your eyes glaze over.</p>
+  <p data-key="c01_p2">He called this <strong>i+1</strong>: your current level (<em>i</em>) plus a small increment of challenge. Too easy and your brain files it under "already know this, moving on." Too hard and your brain files it under "distressing noise." The sweet spot is that slightly-above-your-level zone where comprehension happens through context, and acquisition follows naturally.</p>
+  <div class="theory-grid">
+    <div class="theory-card">
+      <div class="label" data-key="h1_label">Hypothesis 1</div>
+      <h4 data-key="h1_title">Acquisition vs. Learning</h4>
+      <p data-key="h1_body">Subconscious acquisition through exposure beats conscious grammar study for actual communication. Grammar study helps you <em>monitor</em> output, it doesn't generate fluency.</p>
+    </div>
+    <div class="theory-card">
+      <div class="label" data-key="h2_label">Hypothesis 2</div>
+      <h4 data-key="h2_title">The Input Hypothesis (i+1)</h4>
+      <p data-key="h2_body">You acquire language when input is just above your current level. Context carries the meaning; your brain fills the gaps. This is also how babies do it, minus the subtitles option.</p>
+    </div>
+    <div class="theory-card">
+      <div class="label" data-key="h3_label">Hypothesis 3</div>
+      <h4 data-key="h3_title">The Affective Filter</h4>
+      <p data-key="h3_body">Stress, embarrassment, and anxiety physically block acquisition. A relaxed, curious brain absorbs language. A panicked one defends itself. Choose content you <em>actually enjoy.</em></p>
+    </div>
+    <div class="theory-card">
+      <div class="label" data-key="h4_label">2026 Update</div>
+      <h4 data-key="h4_title">Output Matters Too</h4>
+      <p data-key="h4_body">Linguist Merrill Swain's research showed output (speaking and writing)forces you to notice gaps in your knowledge. Input is the engine; output is the quality control.</p>
+    </div>
+  </div>
+  <p data-key="c01_p3">Current neurolinguistics research adds one important nuance: language development isn't purely passive input. Your brain learns faster when it's <em>active</em>, when it predicts, gets corrected, interacts, and makes mistakes in real contexts. Think of input as building vocabulary and patterns, and output as field-testing them under pressure. You need both. The old debate of "input vs. output" is settled: it's not a competition, it's a sequence.</p>
+  <div class="callout" data-key="c01_callout">Second Language Acquisition (SLA) research consistently shows that learners need to understand roughly 95–98% of input for optimal acquisition. That means one unknown word per sentence is a learning opportunity. Ten unknown words per sentence is a headache.<cite data-key="c01_cite">Nation, Krashen, VanPatten et al. decades of agreement on at least this much</cite></div>
+</section>
+
+<section class="section reveal" id="four-steps">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c02_label">🗺️ 02: The Framework</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c02_h2">Four Steps. <em>In Order.</em></h2>
+  <p data-key="c02_p1">Everything in this guide fits into one of these four phases. They're sequential, but they overlap, you'll find yourself doing all four simultaneously once you gain momentum. Don't worry about that. What you should worry about is jumping to step 3 before step 2 has had time to cook.</p>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-number">01</div>
+      <h3 data-key="s1_title">Mindset</h3>
+      <p data-key="s1_body">Discard everything you know about language learning from school. Grammar books, translation exercises, vocabulary lists, those tools produce people who can pass exams but go mute in front of a native speaker. Open your mind to the idea that <strong>fluency is an accident you engineer deliberately.</strong></p>
+    </div>
+    <div class="step">
+      <div class="step-number">02</div>
+      <h3 data-key="s2_title">Input</h3>
+      <p data-key="s2_body">Watch series. Listen to podcasts. Read things you actually find interesting, in your target language. This is the part that feels like procrastination but is in fact the entire method. The only rule: it must be in the target language, and it must be content you <em>genuinely want</em> to consume.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">03</div>
+      <h3 data-key="s3_title">Output</h3>
+      <p data-key="s3_body">Speaking before you're ready produces fossilised errors, bad habits calcified by repetition. Wait until the language starts to think itself into your head uninvited. You'll know when: random sentences will surface in your brain in the target language. That's your starting point.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">04</div>
+      <h3 data-key="s4_title">Polishing</h3>
+      <p data-key="s4_body">Fluency is not a destination; it's a subscription service that charges in time and attention. Grammar study belongs here, not at the beginning. No native speaker on Earth learned their mother tongue with a grammar textbook. You don't need to either. At least not yet.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="concepts">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c03_label">⛵ 03: New Concepts</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c03_h2">Ideas That Weren't in the <em>First Edition</em></h2>
+  <p data-key="c03_p1">These are concepts I developed or refined after my original publication in 2021, the kind of mental models that, once you have them, make the whole process feel considerably less mysterious.</p>
+  <div class="concept-highlight">
+    <div class="concept">
+      <span class="tag" data-key="lion_tag">🦁 The Lion Jigsaw Principle</span>
+      <h3 data-key="lion_title">Don't Build Left to Right</h3>
+      <p data-key="lion_p1">Imagine a 1000-piece jigsaw of a lion's face. If you build it left to right, you'll spend a long time staring at grass before the lion appears. But if you build it randomly (grabbing pieces wherever your interest takes you)you'll start to see the lion at 30% completion. You'll recognise what you're making.</p>
+      <p data-key="lion_p2">Vocabulary works the same way. Trying to learn a language in a linear, structured order means spending a lot of time in the grammatical equivalent of grass. Random, interest-driven acquisition (learning words because they showed up in something you cared about)assembles the whole picture faster, and gives you recognition far earlier than a word-list approach would.</p>
+      <p data-key="lion_p3">Your brain will spot the lion before the puzzle is finished. That's comprehension. That's the goal.</p>
+    </div>
+    <div class="concept-divider"></div>
+    <div class="concept">
+      <span class="tag" data-key="rocklee_tag">⚡ The Rock Lee Weight Method</span>
+      <h3 data-key="rocklee_title">Train Above Your Level on Purpose</h3>
+      <p data-key="rocklee_p1">In the anime series Naruto, Rock Lee trains with enormous leg weights, so that when he finally removes them, his base speed is terrifying. The principle translates directly to listening comprehension.</p>
+      <p data-key="rocklee_p2">Once you can follow native content reasonably well, start listening at 1.25x, then 1.5x, then 2x speed. It will feel wrong. You'll miss things. That's the weight. When you return to 1x, native speech will feel almost leisurely, you'll catch words you previously missed entirely because your ear trained above the threshold.</p>
+      <p data-key="rocklee_p3">This also doubles as a confidence calibration tool: if an AI voice assistant can understand your pronunciation at 1.5x speed, a human absolutely can at 1x. Use it to test yourself without the social cost of making mistakes in front of people.</p>
+    </div>
+  </div>
+  <div class="big-quote" data-key="c03_bigquote">"You don't use a language to reach fluency. You use it for other things, and fluency arrives as a side effect."</div>
+  <h3 data-key="c03_h3">Quantity vs. Quality, The Rules That Still Apply</h3>
+  <div class="tips">
+    <div class="tip"><span class="tip-marker">→</span><span data-key="tip1">Learn phrases, not words in isolation. Context is everything. A word without a sentence is like a note without a melody, technically present, functionally useless.</span></div>
+    <div class="tip"><span class="tip-marker">→</span><span data-key="tip2">Skip Google Translate. Search for images instead. Association beats translation every time, you want the concept, not the Portuguese equivalent standing in the way.</span></div>
+    <div class="tip"><span class="tip-marker">→</span><span data-key="tip3">If it doesn't give you pleasure, don't do it. The method only works if you sustain it. Sustainability requires enjoyment. Pick content you'd watch anyway.</span></div>
+    <div class="tip"><span class="tip-marker">→</span><span data-key="tip4">Sleep is part of the method. Memory consolidation (the transfer from short-term to long-term)happens during sleep. Pulling an all-night study session is working against yourself.</span></div>
+    <div class="tip"><span class="tip-marker">→</span><span data-key="tip5">Emotion accelerates acquisition. Your brain doesn't care about vocabulary lists. It cares about things that made your heart beat faster. Watch the thriller. Listen to the music. Read the thing that keeps you up at night.</span></div>
+    <div class="tip"><span class="tip-marker">→</span><span data-key="tip6"><strong>You'll acquire them naturally through abundant exposure.</strong> The most frequent two thousand words cover most everyday situations, your brain is a pattern-recognition machine. Let it run.</span></div>
+  </div>
+</section>
+
+<section class="section reveal" id="tools">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c04_label">🪖 04: The Arsenal</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c04_h2">Tools That <em>Actually</em> Earn Their Place</h2>
+  <p data-key="c04_p1">Apps are training wheels. Good ones accelerate your start; bad ones become a substitute for real acquisition. None of these should be your primary activity, but all of them are genuinely useful when used correctly.</p>
+  <h3 data-key="c04_mem">Memory Systems</h3>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-icon">🃏</div>
+      <h4 data-key="anki_title">Anki / SRS</h4>
+      <p data-key="anki_body">Anki is a free flashcard app built around a Spaced Repetition System (SRS), an algorithm that surfaces each card right before you're about to forget it. One of the most effective memorisation tools ever made. The learning curve is real, but there are excellent tutorials online. Build a deck of sentences, not isolated words, and let it work.</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">📓</div>
+      <h4 data-key="goldlist_title">The Goldlist Method</h4>
+      <p data-key="goldlist_body">The analogue answer to Anki. Write 20 sentences per day in a notebook. Return in two weeks. Rewrite only the ones you've forgotten. Repeat until none remain. Satisfying in a way that screen-tapping simply isn't.</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">📚</div>
+      <h4 data-key="resources_title">Finding Resources in Any Language</h4>
+      <p data-key="resources_body">Every language has its own ecosystem of free content, you just need to know how to find it. Take any topic that interests you, translate the keyword into your target language, and search. Subscribe to whatever sticks. The algorithm will do the rest.</p>
+    </div>
+  </div>
+  <h3 data-key="c04_input">Input Machines</h3>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-icon">🎬</div>
+      <h4 data-key="series_title">Series &amp; Films</h4>
+      <p data-key="series_body">The closest simulation of how children acquire language, watching people do things and hearing words attached to those things. Not dubbed. Never dubbed. Use closed captions in the target language, not your own.</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">🎙️</div>
+      <h4 data-key="podcasts_title">Podcasts</h4>
+      <p data-key="podcasts_body">Listening is the most important skill. It develops pronunciation, comprehension, and the internal rhythm of the language. Podcasts are pure listening practice available at any time. Start at your level; apply the Rock Lee Weight Method as you progress.</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">📱</div>
+      <h4 data-key="social_title">Social Media Immersion</h4>
+      <p data-key="social_body">Follow native speakers in your target language. Change your phone's display language. Let your algorithm feed you content in the target language. Passive exposure stacks up without requiring dedicated study time.</p>
+    </div>
+  </div>
+  <h3 data-key="c04_apps">Apps Worth Mentioning</h3>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-icon">🌐</div>
+      <h4>Busuu</h4>
+      <p data-key="busuu_body">Good interface, community features, tracks vocabulary acquired. Best for structured beginners who need scaffolding before going fully independent.</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">📖</div>
+      <h4>Beelinguapp</h4>
+      <p data-key="beeling_body">Texts with audio across difficulty levels. Powerful for vocabulary acquisition through context, exactly what the Flow Method calls for. Bilingual reading builds pattern recognition fast.</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">🗣️</div>
+      <h4 data-key="aivoice_title">AI Voice Modes</h4>
+      <p data-key="aivoice_body">Claude and Gemini both offer voice conversation modes that let you speak in any language, at any level, without judgment. This is your pronunciation gym. If an AI understands you, a human will too. Zero social cost. Maximum feedback.</p>
+    </div>
+  </div>
+  <h3 data-key="c04_ai">The AI Layer, 2026 Addition</h3>
+  <div class="tools-grid">
+    <div class="tool-card">
+      <div class="tool-icon">🤖</div>
+      <h4 data-key="aiconv_title">AI Conversation Partners</h4>
+      <p data-key="aiconv_body">Claude, Gemini, and others will converse with you in any language, at any level, endlessly, without judgment. Set the scene: "Pretend you're a waiter in Barcelona. Only respond in Spanish. Correct my errors naturally within the conversation." The patience-to-cost ratio is unmatched.</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">👥</div>
+      <h4 data-key="meetup_title">Polyglot Meetups</h4>
+      <p data-key="meetup_body">Find language exchange events, online or in person. The social pressure of real conversation is irreplaceable after a certain point. Platforms like Meetup, Tandem, and HelloTalk connect you with natives who want to learn your language too. Fair trade.</p>
+    </div>
+    <div class="tool-card">
+      <div class="tool-icon">🔁</div>
+      <h4 data-key="exchange_title">Language Exchange</h4>
+      <p data-key="exchange_body">Tandem and HelloTalk pair you with native speakers who want to learn your language. You teach them an hour; they teach you an hour. No money changes hands, and the authenticity of the interaction is something no app can replicate.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="cefr">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c05_label">📈 05: Know Where You Stand</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c05_h2">The <em>CEFR</em> Levels, Translated Into Human</h2>
+  <p data-key="c05_p1">The Common European Framework of Reference for Languages (CEFR) is the international standard for measuring language proficiency. Six levels, from hopeful beginner to terrifyingly competent. Knowing where you are matters, not just for resumes, but for picking content at the right difficulty.</p>
+  <div class="cefr-list">
+    <div class="cefr-item"><div class="cefr-badge">A1</div><div class="cefr-desc" data-key="a1"><strong>Impressive to your family.</strong> You can introduce yourself, order coffee, and count to ten. Everyone congratulates you. Cherish this phase, it's the last time it will be this easy to impress people.</div></div>
+    <div class="cefr-item"><div class="cefr-badge">A2</div><div class="cefr-desc" data-key="a2"><strong>Functional tourist.</strong> You won't go hungry abroad. Basic survival: handled. Anything more complex causes a polite "I'm sorry?" from the other party and a small existential crisis from you.</div></div>
+    <div class="cefr-item"><div class="cefr-badge">B1</div><div class="cefr-desc" data-key="b1"><strong>Context warrior.</strong> You can follow series without subtitles and understand the plot, even if you don't catch every word. The gaps are filled by everything around them. This is where the Flow Method starts to feel like magic.</div></div>
+    <div class="cefr-item"><div class="cefr-badge">B2</div><div class="cefr-desc" data-key="b2"><strong>Vocabulary at roughly 4,000 to 6,000 words.</strong> The unknown words are now the exception, not the rule. The lion is fully visible. You're looking up perhaps 10% of what you encounter, mostly specialised vocabulary that native speakers also Google occasionally.</div></div>
+    <div class="cefr-item"><div class="cefr-badge advanced">C1</div><div class="cefr-desc" data-key="c1"><strong>The language becomes a tool.</strong> You research things in it. Your YouTube history is in it. You dream in it occasionally. It is no longer a foreign language, it is simply another language.</div></div>
+    <div class="cefr-item"><div class="cefr-badge advanced">C2</div><div class="cefr-desc" data-key="c2"><strong>Native speakers stop complimenting you and start correcting you.</strong> This is a promotion. You've stopped being "the foreigner with great English" and started being "a person who made a grammatical error." Welcome. The view from here is excellent.</div></div>
+  </div>
+</section>
+
+<section class="section reveal" id="feynman">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c06_label">⚛️ 06: The Feynman Technique</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c06_h2">If You Can't Explain It to a <em>Six-Year-Old</em>...</h2>
+  <p data-key="c06_p1">Richard Feynman, Nobel laureate, physicist, and arguably the best explainer in the history of science, had a technique for exposing the difference between understanding something and merely recognising it. The distinction matters enormously in language learning, particularly for grammar.</p>
+  <div class="callout" data-key="c06_callout">"If you can't explain it simply, you don't understand it well enough." attributed to Einstein, probably never said by Einstein, but accurate regardless.</div>
+  <p data-key="c06_p2">Apply this to grammar: whenever you <em>feel</em> like you understand a rule, try to explain it from scratch to an imaginary child. The places where your explanation breaks down are the exact gaps in your knowledge. This is more useful than any grammar exercise.</p>
+  <div class="feynman-steps">
+    <div class="feynman-step"><p data-key="f1"><strong>Choose a concept</strong>, a grammar rule, a tense, a construction that keeps tripping you up.</p></div>
+    <div class="feynman-step"><p data-key="f2"><strong>Explain it out loud</strong> as if teaching a child. No jargon. No shortcuts. Force simplicity.</p></div>
+    <div class="feynman-step"><p data-key="f3"><strong>Identify the gaps</strong>, the moments where you said "well, it's... complicated" are the moments you don't actually understand it yet.</p></div>
+    <div class="feynman-step"><p data-key="f4"><strong>Return to the source</strong>, find authentic examples of the concept in real content. Fix the gap with comprehensible input, not abstract rules.</p></div>
+  </div>
+</section>
+
+<section class="section reveal" id="output">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c07_label">💬 07: Output</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c07_h2">When to Start <em>Speaking</em></h2>
+  <p data-key="c07_p1">Practice makes permanent, not perfect. The problem with speaking from day one is that you'll make the same mistakes over and over and those mistakes will harden into habits. The solution isn't to never speak, it's to delay speaking until you have enough internal material to speak from, rather than just translating from your native language in real time.</p>
+  <p data-key="c07_p2">The signal that you're ready: random sentences in your target language appearing in your head without you summoning them. Your brain has started generating content. That's your starting point.</p>
+  <h3 data-key="c07_h3_1">Phase 1: Internal Output</h3>
+  <p data-key="c07_ph1">Think in the language. Narrate your day to yourself. Repeat lines you heard that stuck. Pick a scene from something you watched (a talk show, an interview, a speech)and answer the questions out loud before the guest does. That phrase becomes a template your brain applies to other sentences. No performance pressure. Pure pattern internalization.</p>
+  <h3 data-key="c07_h3_2">Phase 2: Structured Output Without an Audience</h3>
+  <p data-key="c07_ph2">Answer interview questions directed at celebrities in TV shows, as if you were them. The host asks a question, you answer it first, then watch what the guest actually says. Your speaking speed, pronunciation, and response time all improve simultaneously, in a zero-stakes environment. Use AI voice modes as pronunciation checkpoints.</p>
+  <h3 data-key="c07_h3_3">Phase 3: Live Output</h3>
+  <p data-key="c07_ph3">When you can follow most of what you hear (roughly 80% or more)you're ready for live practice. Cambly, italki, Tandem, HelloTalk, polyglot meetups. Real conversation with real people who will mishear you, correct you, and refuse to slow down. This is the final test, and you will be fine.</p>
+  <div class="callout" data-key="c07_callout">Most people who say they've been "studying a language for years" have never actually used it outside a classroom. The gap between knowing and speaking isn't talent, it's the simple, uncomfortable decision to open your mouth before you feel ready. Make that decision early.</div>
+</section>
+
+<section class="section reveal" id="close">
+  <div class="chapter-label">
+    <span class="chapter-num" data-key="c08_label">✅ 08: That's It</span>
+    <div class="chapter-rule"></div>
+  </div>
+  <h2 data-key="c08_h2">Your Future Self Speaks <em>Several Languages</em></h2>
+  <p data-key="c08_p1">You now have the complete framework. Four phases, a theory that backs it up, mental models for how vocabulary and listening development actually work, tools ranked by genuine utility, and a calibration system to know where you stand.</p>
+  <p data-key="c08_p2">The Flow Method isn't secret or complex. It's just consistent application of something your brain already knows how to do, the same process it used to acquire the language you're reading this in. Point it at new material. Get out of its way. Give it time and sleep and content you love.</p>
+  <p data-key="c08_p3">The rest takes care of itself. Except the discipline. That part you have to provide.</p>
+  <div class="big-quote" data-key="c08_bigquote">"You already know how to do this. You did it once, as a baby, with no method, no internet, and no concept of what you were doing. This time you have all three."</div>
+</section>
+
+<footer>
+  <span>© 2026 Jailson Júnior (All rights reserved</span>
+  <span>The Flow Method)Language Field Manual</span>
+  <span>改善, Continuous Improvement</span>
+</footer>
+
+<script>
+const T = {
+  pt: {
+    nav_origin:"Origem",nav_theory:"Teoria",nav_steps:"4 Etapas",nav_concepts:"Conceitos",nav_tools:"Ferramentas",nav_output:"Produção",
+    hero_eyebrow:"Manual de Campo, Segunda Edição",
+    hero_h1:"O Manual de <em>Aquisição</em> de Idiomas",
+    hero_sub:"Um guia prático e direto para se tornar fluente em qualquer idioma, construído a partir de anos de experimentação obsessiva e atualizado com tudo o que veio depois. O Método Flow. Nenhum corujão verde foi prejudicado na produção deste documento.",
+    meta_author_label:"Autor",meta_edition_label:"Edição",meta_target_label:"Público-alvo",meta_target_val:"Qualquer Idioma",
+    c00_label:"🕸️ 00: A Origem",
+    c00_h2:"Começou com uma Legenda que Eu Não Precisei",
+    c00_p1:"Numa noite, estava assistindo à minha série favorita quando percebi que havia entendido uma frase complexa num idioma estrangeiro sem ler as legendas. Isso foi surpreendente por vários motivos, sendo o principal deles que, até aquele momento, eu estava convicto de que minhas habilidades em línguas estrangeiras se limitavam a <em>\"I love you\"</em> e <em>\"Run Barry, run.\"</em>",
+    c00_p2:"O que tinha acontecido? Eu estava consumindo horas de conteúdo em inglês (YouTube, séries, filmes)principalmente por diversão, um pouco por curiosidade. Aplicativos de idiomas. Vídeos de gramática em português. Tudo útil até um certo ponto. Mas esse ponto era algo em torno de <em>\"turista funcional\"</em>, não <em>\"pessoa que pensa em outro idioma enquanto escova os dentes.\"</em>",
+    c00_p3:"A virada não veio de estudar mais, mas de consumir mais, do jeito certo. Onze meses depois de começar, em 2017, tive minha primeira conversa de verdade com um falante nativo. Nada perfeito. Nada elegante. Mas vinte minutos de comunicação real, e eles ainda têm a vantagem de ter o dia todo para praticar, porque estão, obviamente, desempregados.",
+    c00_p4:"Alguns meses depois, coisas que antes pareciam impossíveis (assistir filmes sem legenda, acompanhar podcasts em velocidade 2x)tinham se tornado rotina. Foi então que encontrei o trabalho do Dr. Stephen Krashen e percebi que havia um nome para o que eu havia descoberto por acaso.",
+    c00_callout:"Você não aprende um idioma. Você se acostuma com ele.",
+    c00_cite:" a conclusão para a qual este guia inteiro está trabalhando",
+    c00_p5:"Este manual é a versão destilada e atualizada desse processo, expandida com o que aprendi desde então, e complementada pelas pesquisas mais recentes em aquisição de segunda língua (ASL). Se aplica a qualquer idioma, independentemente da sua língua materna. Os únicos pré-requisitos são uma conexão com a internet e a disposição de se sentir um pouco perdido de vez em quando, o que, como você verá, é uma característica do processo, não um problema.",
+    c01_label:"🤓 01: A Ciência (Brevemente)",
+    c01_h2:"Por que a Escola <em>Não</em> Funcionou",
+    c01_p1:"Na década de 1980, o linguista Stephen Krashen propôs algo que irritou muitos professores de gramática: que o idioma é <em>adquirido</em>, não aprendido. Que o caminho para a fluência passa pela exposição massiva a conteúdo compreensível (material que você entende em sua maior parte, com uma pitada de novidade)e não pela memorização de tabelas de conjugação até os olhos fecharem.",
+    c01_p2:"Ele chamou isso de <strong>i+1</strong>: seu nível atual (<em>i</em>) mais um pequeno incremento de desafio. Fácil demais e seu cérebro arquiva como \"já sei isso, próximo.\" Difícil demais e seu cérebro arquiva como \"ruído perturbador.\" O ponto ideal é essa zona ligeiramente acima do seu nível, onde a compreensão acontece pelo contexto e a aquisição segue naturalmente.",
+    h1_label:"Hipótese 1",h1_title:"Aquisição vs. Aprendizado",h1_body:"A aquisição subconsciente por exposição supera o estudo consciente de gramática para a comunicação real. O estudo gramatical ajuda a <em>monitorar</em> a produção, mas não gera fluência.",
+    h2_label:"Hipótese 2",h2_title:"A Hipótese do Insumo (i+1)",h2_body:"Você adquire uma língua quando o insumo está um pouco acima do seu nível atual. O contexto carrega o significado; seu cérebro preenche as lacunas. É assim que os bebês fazem, sem a opção de legendas.",
+    h3_label:"Hipótese 3",h3_title:"O Filtro Afetivo",h3_body:"Estresse, constrangimento e ansiedade bloqueiam fisicamente a aquisição. Um cérebro relaxado e curioso absorve o idioma. Um cérebro em pânico se defende. Escolha conteúdo que você <em>realmente goste.</em>",
+    h4_label:"Atualização 2026",h4_title:"O Resultado Também Importa",h4_body:"A pesquisa da linguista Merrill Swain mostrou que produzir (falar e escrever)te obriga a perceber as lacunas no seu conhecimento. O insumo é o motor; a produção é o controle de qualidade.",
+    c01_p3:"A neurologia linguística atual adiciona uma nuance importante: o desenvolvimento da língua não é puramente passivo. Seu cérebro aprende mais rápido quando está <em>ativo</em>, quando prevê, é corrigido, interage e comete erros em contextos reais. Pense no insumo como a construção de vocabulário e padrões, e na produção como testá-los sob pressão. Você precisa dos dois. O velho debate \"insumo vs. produção\" está resolvido: não é uma competição, é uma sequência.",
+    c01_callout:"A pesquisa em Aquisição de Segunda Língua (ASL) mostra consistentemente que os aprendizes precisam entender cerca de 95–98% do insumo para uma aquisição ideal. Isso significa que uma palavra desconhecida por frase é uma oportunidade de aprendizado. Dez palavras desconhecidas por frase é uma dor de cabeça.",
+    c01_cite:" Nation, Krashen, VanPatten et al. décadas de concordância sobre pelo menos isso",
+    c02_label:"🗺️ 02: O Método",c02_h2:"Quatro Etapas. <em>Em Ordem.</em>",
+    c02_p1:"Tudo neste guia se encaixa em uma dessas quatro fases. São sequenciais, mas se sobrepõem, você vai se pegar fazendo todas as quatro ao mesmo tempo depois que ganhar ritmo. Não se preocupe com isso. O que você deve evitar é pular para a etapa 3 antes que a etapa 2 tenha tempo de amadurecer.",
+    s1_title:"Mentalidade",s1_body:"Descarte tudo o que você sabe sobre aprender idiomas na escola. Livros de gramática, exercícios de tradução, listas de vocabulário, essas ferramentas produzem pessoas que passam em provas mas ficam mudas na frente de um falante nativo. Abra sua mente para a ideia de que <strong>a fluência é um acidente que você engenheira deliberadamente.</strong>",
+    s2_title:"Insumo",s2_body:"Assista séries. Ouça podcasts. Leia coisas que você realmente acha interessante, no idioma-alvo. Essa é a parte que parece procrastinação, mas é na verdade o método inteiro. A única regra: tem que estar no idioma-alvo, e tem que ser conteúdo que você <em>genuinamente quer</em> consumir.",
+    s3_title:"Produção",s3_body:"Falar antes de estar pronto produz erros fossilizados, vícios calcificados pela repetição. Espere até o idioma começar a pensar em você sem ser chamado. Você vai saber quando: frases aleatórias vão surgir na sua cabeça no idioma-alvo. Esse é o seu ponto de partida.",
+    s4_title:"Polimento",s4_body:"A fluência não é um destino; é um serviço por assinatura que cobra em tempo e atenção. O estudo gramatical pertence aqui, não no início. Nenhum falante nativo no mundo aprendeu sua língua materna com um livro de gramática. Você também não precisa. Pelo menos não ainda.",
+    c03_label:"⛵ 03: Novos Conceitos",c03_h2:"Ideias que Não Estavam na <em>Primeira Edição</em>",
+    c03_p1:"São conceitos que desenvolvi ou refinei após minha publicação original em 2021, o tipo de modelos mentais que, uma vez que você os tem, fazem todo o processo parecer consideravelmente menos misterioso.",
+    lion_tag:"🦁 O Princípio do Quebra-Cabeça do Leão",lion_title:"Não Construa da Esquerda para a Direita",
+    lion_p1:"Imagine um quebra-cabeça de 1000 peças com o rosto de um leão. Se você montar da esquerda para a direita, vai passar muito tempo olhando para capim antes de o leão aparecer. Mas se você montar aleatoriamente (pegando peças onde o interesse te levar)vai começar a ver o leão com 30% de conclusão. Você vai reconhecer o que está fazendo.",
+    lion_p2:"O vocabulário funciona da mesma forma. Tentar aprender um idioma em ordem linear e estruturada significa passar muito tempo no equivalente gramatical do capim. A aquisição aleatória e movida pelo interesse (aprender palavras porque elas apareceram em algo que você se importava)monta o quadro completo mais rápido.",
+    lion_p3:"Seu cérebro vai ver o leão antes de o quebra-cabeça estar terminado. Isso é compreensão. Esse é o objetivo.",
+    rocklee_tag:"⚡ O Método do Peso do Rock Lee",rocklee_title:"Treine Acima do Seu Nível de Propósito",
+    rocklee_p1:"Na série de anime Naruto, Rock Lee treina com enormes pesos nas pernas, para que, quando ele finalmente os remove, sua velocidade base seja assustadora. O princípio se traduz diretamente para a compreensão auditiva.",
+    rocklee_p2:"Quando você consegue acompanhar conteúdo nativo razoavelmente bem, comece a ouvir em 1,25x, depois 1,5x, depois 2x. Vai parecer errado. Você vai perder coisas. Esse é o peso. Quando você voltar para 1x, a fala nativa vai parecer quase tranquila.",
+    rocklee_p3:"Isso também serve como ferramenta de calibração de confiança: se um assistente de voz com IA consegue entender sua pronúncia em velocidade 1,5x, um humano definitivamente consegue em 1x. Use-o para se testar sem o custo social de errar na frente de pessoas.",
+    c03_bigquote:"\"Você não usa um idioma para alcançar a fluência. Você o usa para outras coisas, e a fluência chega como efeito colateral.\"",
+    c03_h3:"Quantidade vs. Qualidade, As Regras que Ainda Valem",
+    tip1:"Aprenda frases, não palavras isoladas. O contexto é tudo. Uma palavra sem uma frase é como uma nota sem uma melodia, tecnicamente presente, funcionalmente inútil.",
+    tip2:"Pule o Google Translate. Procure imagens. A associação supera a tradução sempre, você quer o conceito, não o equivalente em inglês no caminho.",
+    tip3:"Se não te der prazer, não faça. O método só funciona se você o mantiver. A sustentabilidade exige prazer. Escolha conteúdo que você assistiria de qualquer jeito.",
+    tip4:"O sono faz parte do método. A consolidação da memória (a transferência do curto para o longo prazo)acontece durante o sono. Uma madrugada de estudos está trabalhando contra você.",
+    tip5:"A emoção acelera a aquisição. Seu cérebro não se importa com listas de vocabulário. Ele se importa com coisas que fizeram seu coração acelerar. Assista o thriller. Ouça a música. Leia o que te mantém acordado à noite.",
+    tip6:"<strong>Você vai adquiri-las naturalmente através da exposição abundante.</strong> As duas mil palavras mais frequentes cobrem a maioria das situações cotidianas, seu cérebro é uma máquina de reconhecimento de padrões. Deixe-o trabalhar.",
+    c04_label:"🪖 04: O Arsenal",c04_h2:"Ferramentas que <em>Realmente</em> Merecem Seu Lugar",
+    c04_p1:"Aplicativos são rodinhas de bicicleta. Os bons aceleram o início; os ruins se tornam um substituto para a aquisição real. Nenhum deles deve ser sua atividade principal, mas todos são genuinamente úteis quando usados corretamente.",
+    c04_mem:"Sistemas de Memória",
+    anki_title:"Anki / SRS",anki_body:"O Anki é um aplicativo gratuito de flashcards construído em torno de um Sistema de Repetição Espaçada (SRS), um algoritmo que apresenta cada cartão logo antes de você estar prestes a esquecê-lo. Uma das ferramentas de memorização mais eficazes já criadas. A curva de aprendizado é real, mas há ótimos tutoriais online. Monte um baralho de frases, não palavras isoladas, e deixe funcionar.",
+    goldlist_title:"O Método Goldlist",goldlist_body:"A resposta analógica ao Anki. Escreva 20 frases por dia num caderno. Volte em duas semanas. Reescreva apenas as que você esqueceu. Repita até não restar nenhuma. Satisfatório de um jeito que tocar em tela simplesmente não é.",
+    resources_title:"Encontrando Recursos em Qualquer Idioma",resources_body:"Todo idioma tem seu próprio ecossistema de conteúdo gratuito, você só precisa saber como encontrá-lo. Pegue qualquer tema que te interessa, traduza a palavra-chave para o idioma-alvo e pesquise. Se inscreva no que grudar. O algoritmo faz o resto.",
+    c04_input:"Máquinas de Insumo",
+    series_title:"Séries e Filmes",series_body:"A simulação mais próxima de como as crianças adquirem idioma, assistindo pessoas fazendo coisas e ouvindo palavras associadas a essas coisas. Sem dublagem. Nunca dublado. Use legendas fechadas no idioma-alvo, não na sua língua.",
+    podcasts_title:"Podcasts",podcasts_body:"Ouvir é a habilidade mais importante. Desenvolve pronúncia, compreensão e o ritmo interno do idioma. Podcasts são prática auditiva pura disponível a qualquer momento. Comece no seu nível; aplique o Método do Peso do Rock Lee conforme avança.",
+    social_title:"Imersão nas Redes Sociais",social_body:"Siga falantes nativos no idioma-alvo. Mude o idioma de exibição do seu celular. Deixe o algoritmo te alimentar com conteúdo no idioma-alvo. A exposição passiva se acumula sem exigir tempo dedicado de estudo.",
+    c04_apps:"Aplicativos que Merecem Menção",
+    busuu_body:"Boa interface, recursos de comunidade, rastreia vocabulário adquirido. Melhor para iniciantes estruturados que precisam de apoio antes de ir totalmente por conta própria.",
+    beeling_body:"Textos com áudio em vários níveis de dificuldade. Poderoso para aquisição de vocabulário pelo contexto, exatamente o que o Método Flow defende. A leitura bilíngue constrói o reconhecimento de padrões rapidamente.",
+    aivoice_title:"Modos de Voz com IA",aivoice_body:"Claude e Gemini oferecem modos de conversa por voz que permitem que você fale em qualquer idioma, em qualquer nível, sem julgamento. Esta é sua academia de pronúncia. Se uma IA entende você, um humano também vai. Zero custo social. Máximo de feedback.",
+    c04_ai:"A Camada de IA, Adição de 2026",
+    aiconv_title:"Parceiros de Conversa com IA",aiconv_body:"Claude, Gemini e outros vão conversar com você em qualquer idioma, em qualquer nível, sem fim, sem julgamento. Monte a cena: \"Finja que você é um garçom em Barcelona. Responda apenas em espanhol. Corrija meus erros naturalmente dentro da conversa.\" A relação paciência/custo é imbatível.",
+    meetup_title:"Encontros de Poliglotas",meetup_body:"Encontre eventos de intercâmbio de idiomas, online ou presencialmente. A pressão social da conversa real é insubstituível a partir de certo ponto. Plataformas como Meetup, Tandem e HelloTalk conectam você com nativos que querem aprender seu idioma também. Troca justa.",
+    exchange_title:"Intercâmbio de Idiomas",exchange_body:"Tandem e HelloTalk combinam você com falantes nativos que querem aprender seu idioma. Você ensina uma hora; eles ensinam uma hora. Nenhum dinheiro muda de mãos, e a autenticidade da interação é algo que nenhum aplicativo consegue replicar.",
+    c05_label:"📈 05: Saiba Onde Você Está",c05_h2:"Os Níveis <em>CEFR</em>, Traduzidos para o Humano",
+    c05_p1:"O Quadro Europeu Comum de Referência para Línguas (CECR/CEFR) é o padrão internacional para medir a proficiência em idiomas. Seis níveis, do iniciante esperançoso ao assustadoramente competente. Saber onde você está importa, não apenas para currículos, mas para escolher conteúdo na dificuldade certa.",
+    a1:"<strong>Impressionante para a família.</strong> Você consegue se apresentar, pedir um café e contar até dez. Todo mundo te parabeniza. Aprecie esta fase, é a última vez que vai ser tão fácil impressionar as pessoas.",
+    a2:"<strong>Turista funcional.</strong> Você não vai passar fome no exterior. Sobrevivência básica: resolvida. Qualquer coisa mais complexa causa um educado \"Como?\" da outra parte e uma pequena crise existencial sua.",
+    b1:"<strong>Guerreiro do contexto.</strong> Você consegue acompanhar séries sem legenda e entender o enredo, mesmo sem pegar todas as palavras. As lacunas são preenchidas por tudo ao redor. É aqui que o Método Flow começa a parecer mágica.",
+    b2:"<strong>Vocabulário de aproximadamente 4.000 a 6.000 palavras.</strong> As palavras desconhecidas são agora a exceção, não a regra. O leão está totalmente visível. Você consulta talvez 10% do que encontra, principalmente vocabulário especializado que nativos também pesquisam às vezes.",
+    c1:"<strong>O idioma vira uma ferramenta.</strong> Você pesquisa coisas nele. Seu histórico do YouTube está nele. Você sonha nele ocasionalmente. Ele não é mais uma língua estrangeira, é simplesmente outro idioma.",
+    c2:"<strong>Falantes nativos param de te elogiar e começam a te corrigir.</strong> Isso é uma promoção. Você parou de ser \"o estrangeiro com inglês ótimo\" e começou a ser \"uma pessoa que cometeu um erro gramatical.\" Bem-vindo. A vista daqui é excelente.",
+    c06_label:"⚛️ 06: A Técnica Feynman",c06_h2:"Se Você Não Consegue Explicar para uma <em>Criança de Seis Anos</em>...",
+    c06_p1:"Richard Feynman, Prêmio Nobel, físico e indiscutivelmente o melhor explicador na história da ciência, tinha uma técnica para expor a diferença entre entender algo e simplesmente reconhecê-lo. A distinção importa enormemente no aprendizado de idiomas, particularmente na gramática.",
+    c06_callout:"\"Se você não consegue explicar de forma simples, é porque não entendeu bem o suficiente.\" atribuído a Einstein, provavelmente nunca dito por Einstein, mas preciso de qualquer forma.",
+    c06_p2:"Aplique isso à gramática: sempre que você <em>achar</em> que entende uma regra, tente explicá-la do zero para uma criança imaginária. Os lugares onde sua explicação desmorona são exatamente as lacunas no seu conhecimento. Isso é mais útil do que qualquer exercício de gramática.",
+    f1:"<strong>Escolha um conceito</strong>, uma regra gramatical, um tempo verbal, uma construção que continua te atrapalhando.",
+    f2:"<strong>Explique em voz alta</strong> como se estivesse ensinando uma criança. Sem jargões. Sem atalhos. Force a simplicidade.",
+    f3:"<strong>Identifique as lacunas</strong>, os momentos em que você disse \"bem, é... complicado\" são os momentos em que você ainda não entende de verdade.",
+    f4:"<strong>Volte à fonte</strong>, encontre exemplos autênticos do conceito em conteúdo real. Corrija a lacuna com insumo compreensível, não com regras abstratas.",
+    c07_label:"💬 07: Produção",c07_h2:"Quando Começar a <em>Falar</em>",
+    c07_p1:"A prática torna permanente, não perfeito. O problema de falar desde o primeiro dia é que você vai cometer os mesmos erros repetidamente e esses erros vão se solidificar em hábitos. A solução não é nunca falar, é adiar a fala até você ter material interno suficiente para falar, em vez de apenas traduzir da sua língua materna em tempo real.",
+    c07_p2:"O sinal de que você está pronto: frases aleatórias no idioma-alvo aparecendo na sua cabeça sem você as invocar. Seu cérebro começou a gerar conteúdo. Esse é o seu ponto de partida.",
+    c07_h3_1:"Fase 1: Produção Interna",c07_ph1:"Pense no idioma. Narre seu dia para si mesmo. Repita falas que ficaram na sua cabeça. Escolha uma cena de algo que você assistiu (um talk show, uma entrevista, um discurso)e responda as perguntas em voz alta antes do convidado. Essa frase se torna um modelo que seu cérebro aplica a outras frases. Sem pressão de performance. Pura internalização de padrões.",
+    c07_h3_2:"Fase 2: Produção Estruturada Sem Audiência",c07_ph2:"Responda perguntas de entrevistas feitas a celebridades em programas de TV, como se fosse você. O apresentador faz a pergunta, você responde primeiro, depois assiste o que o convidado realmente diz. Sua velocidade de fala, pronúncia e tempo de resposta melhoram simultaneamente, em um ambiente sem riscos. Use modos de voz com IA como pontos de verificação de pronúncia.",
+    c07_h3_3:"Fase 3: Produção ao Vivo",c07_ph3:"Quando você consegue acompanhar a maior parte do que ouve (cerca de 80% ou mais)está pronto para a prática ao vivo. Cambly, italki, Tandem, HelloTalk, encontros de poliglotas. Conversa real com pessoas reais que vão te ouvir errado, te corrigir e se recusar a diminuir a velocidade. Este é o teste final, e você vai ficar bem.",
+    c07_callout:"A maioria das pessoas que diz estar \"estudando um idioma há anos\" nunca o usou fora de uma sala de aula. A distância entre saber e falar não é talento, é a decisão simples e desconfortável de abrir a boca antes de se sentir pronto. Tome essa decisão cedo.",
+    c08_label:"✅ 08: É Isso",c08_h2:"Seu Eu Futuro Fala <em>Vários Idiomas</em>",
+    c08_p1:"Você agora tem o framework completo. Quatro fases, uma teoria que o sustenta, modelos mentais de como o vocabulário e o desenvolvimento auditivo realmente funcionam, ferramentas classificadas por utilidade genuína e um sistema de calibração para saber onde você está.",
+    c08_p2:"O Método Flow não é secreto nem complexo. É apenas a aplicação consistente de algo que seu cérebro já sabe fazer, o mesmo processo que usou para adquirir o idioma no qual você está lendo isso. Aponte-o para novo material. Saia do caminho. Dê a ele tempo, sono e conteúdo que você ama.",
+    c08_p3:"O resto se resolve sozinho. Exceto a disciplina. Essa parte você tem que prover.",
+    c08_bigquote:"\"Você já sabe como fazer isso. Fez uma vez, quando bebê, sem método, sem internet e sem a menor noção do que estava fazendo. Desta vez você tem os três.\""
+  },
+  es: {
+    nav_origin:"Origen",nav_theory:"Teoría",nav_steps:"4 Pasos",nav_concepts:"Conceptos",nav_tools:"Herramientas",nav_output:"Producción",
+    hero_eyebrow:"Manual de Campo, Segunda Edición",
+    hero_h1:"El Manual de <em>Adquisición</em> de Idiomas",
+    hero_sub:"Una guía práctica y directa para alcanzar la fluidez en cualquier idioma, construida a partir de años de experimentación obsesiva y actualizada con todo lo que vino después. El Método Flow. Ningún búho verde fue lastimado en la elaboración de este documento.",
+    meta_author_label:"Autor",meta_edition_label:"Edición",meta_target_label:"Público",meta_target_val:"Cualquier Idioma",
+    c00_label:"🕸️ 00: El Origen",c00_h2:"Empezó con un Subtítulo que No Necesité",
+    c00_p1:"Una noche estaba viendo mi serie favorita cuando me di cuenta de que había entendido una frase compleja en un idioma extranjero sin leer los subtítulos. Esto fue sorprendente por varias razones, siendo la principal que, hasta ese momento, estaba convencido de que mis habilidades en idiomas extranjeros se limitaban a <em>\"I love you\"</em> y <em>\"Run Barry, run.\"</em>",
+    c00_p2:"¿Qué había pasado? Había estado consumiendo horas de contenido en inglés (YouTube, series, películas)principalmente por diversión, en parte por curiosidad. Aplicaciones de idiomas. Vídeos de gramática en español. Todo útil hasta cierto punto. Pero ese punto estaba en algún lugar alrededor de <em>\"turista funcional\"</em>, no <em>\"persona que piensa en otro idioma mientras se cepilla los dientes.\"</em>",
+    c00_p3:"El avance no vino de estudiar más, sino de consumir más, de la manera correcta. Once meses después de empezar, en 2017, tuve mi primera conversación real con un hablante nativo. No perfecta. No elegante. Pero veinte minutos de comunicación real, y ellos tienen la ventaja de tener todo el día para practicar, porque están, obviamente, desempleados.",
+    c00_p4:"Unos meses después, cosas que antes parecían imposibles (ver películas sin subtítulos, seguir podcasts a velocidad 2x)se habían vuelto rutinarias. Fue entonces cuando encontré el trabajo del Dr. Stephen Krashen y me di cuenta de que había un nombre para lo que había descubierto por accidente.",
+    c00_callout:"No aprendes un idioma. Te acostumbras a él.",
+    c00_cite:" la conclusión hacia la que trabaja toda esta guía",
+    c00_p5:"Este manual es la versión destilada y actualizada de ese proceso, ampliado con lo que he aprendido desde entonces, y complementado por las últimas investigaciones en adquisición de segundas lenguas (ASL). Se aplica a cualquier idioma, independientemente de tu lengua materna. Los únicos requisitos son una conexión a internet y la disposición a sentirte un poco perdido de vez en cuando, lo cual, como verás, es una característica del proceso, no un defecto.",
+    c01_label:"🤓 01: La Ciencia (Brevemente)",c01_h2:"Por qué la Escuela <em>No</em> Funcionó",
+    c01_p1:"En la década de 1980, el lingüista Stephen Krashen propuso algo que irritó a muchos profesores de gramática: que el idioma es <em>adquirido</em>, no aprendido. Que el camino hacia la fluidez pasa por la exposición masiva a contenido comprensible (material que entiendes en su mayor parte, con una pequeña dosis de lo nuevo)no por memorizar tablas de conjugación hasta que los ojos se cierren.",
+    c01_p2:"Lo llamó <strong>i+1</strong>: tu nivel actual (<em>i</em>) más un pequeño incremento de desafío. Demasiado fácil y tu cerebro lo archiva como \"ya lo sé, siguiente.\" Demasiado difícil y tu cerebro lo archiva como \"ruido perturbador.\" El punto ideal es esa zona ligeramente por encima de tu nivel, donde la comprensión ocurre a través del contexto y la adquisición sigue de forma natural.",
+    h1_label:"Hipótesis 1",h1_title:"Adquisición vs. Aprendizaje",h1_body:"La adquisición subconsciente a través de la exposición supera al estudio consciente de gramática para la comunicación real. El estudio gramatical te ayuda a <em>monitorear</em> la producción, pero no genera fluidez.",
+    h2_label:"Hipótesis 2",h2_title:"La Hipótesis del Insumo (i+1)",h2_body:"Adquieres el idioma cuando el insumo está justo por encima de tu nivel actual. El contexto lleva el significado; tu cerebro llena los huecos. Así es como los bebés lo hacen, sin la opción de subtítulos.",
+    h3_label:"Hipótesis 3",h3_title:"El Filtro Afectivo",h3_body:"El estrés, la vergüenza y la ansiedad bloquean físicamente la adquisición. Un cerebro relajado y curioso absorbe el idioma. Uno en pánico se defiende. Elige contenido que <em>realmente disfrutes.</em>",
+    h4_label:"Actualización 2026",h4_title:"El Resultado También Importa",h4_body:"La investigación de la lingüista Merrill Swain demostró que producir (hablar y escribir)te obliga a notar las lagunas en tu conocimiento. El insumo es el motor; la producción es el control de calidad.",
+    c01_p3:"La neurología lingüística actual añade un matiz importante: el desarrollo del idioma no es puramente pasivo. Tu cerebro aprende más rápido cuando está <em>activo</em>, cuando predice, es corregido, interactúa y comete errores en contextos reales. Piensa en el insumo como la construcción de vocabulario y patrones, y en la producción como ponerlos a prueba bajo presión. Necesitas ambos. El viejo debate de \"insumo vs. producción\" está resuelto: no es una competencia, es una secuencia.",
+    c01_callout:"La investigación en Adquisición de Segundas Lenguas (ASL) muestra consistentemente que los aprendices necesitan entender aproximadamente el 95–98% del insumo para una adquisición óptima. Eso significa que una palabra desconocida por frase es una oportunidad de aprendizaje. Diez palabras desconocidas por frase es un dolor de cabeza.",
+    c01_cite:" Nation, Krashen, VanPatten et al. décadas de acuerdo en al menos esto",
+    c02_label:"🗺️ 02: El Método",c02_h2:"Cuatro Pasos. <em>En Orden.</em>",
+    c02_p1:"Todo en esta guía encaja en una de estas cuatro fases. Son secuenciales, pero se superponen, te encontrarás haciendo las cuatro simultáneamente una vez que ganes impulso. No te preocupes por eso. Lo que debes evitar es saltar al paso 3 antes de que el paso 2 haya tenido tiempo de madurar.",
+    s1_title:"Mentalidad",s1_body:"Descarta todo lo que sabes sobre aprender idiomas en la escuela. Libros de gramática, ejercicios de traducción, listas de vocabulario, esas herramientas producen personas que aprueban exámenes pero se quedan mudas ante un hablante nativo. Abre tu mente a la idea de que <strong>la fluidez es un accidente que ingenias deliberadamente.</strong>",
+    s2_title:"Insumo",s2_body:"Mira series. Escucha podcasts. Lee cosas que realmente te interesen, en el idioma objetivo. Esta es la parte que parece procrastinación pero es en realidad todo el método. La única regla: tiene que estar en el idioma objetivo, y tiene que ser contenido que <em>genuinamente quieras</em> consumir.",
+    s3_title:"Producción",s3_body:"Hablar antes de estar listo produce errores fosilizados, malos hábitos calcificados por la repetición. Espera hasta que el idioma empiece a pensarse en tu cabeza sin que lo llames. Lo sabrás cuando ocurra: frases aleatorias surgirán en tu mente en el idioma objetivo. Ese es tu punto de partida.",
+    s4_title:"Pulido",s4_body:"La fluidez no es un destino; es un servicio de suscripción que cobra en tiempo y atención. El estudio gramatical pertenece aquí, no al principio. Ningún hablante nativo en el mundo aprendió su lengua materna con un libro de gramática. Tú tampoco lo necesitas. Al menos no todavía.",
+    c03_label:"⛵ 03: Nuevos Conceptos",c03_h2:"Ideas que No Estaban en la <em>Primera Edición</em>",
+    c03_p1:"Son conceptos que desarrollé o refiné después de mi publicación original en 2021, el tipo de modelos mentales que, una vez que los tienes, hacen que todo el proceso parezca considerablemente menos misterioso.",
+    lion_tag:"🦁 El Principio del Rompecabezas del León",lion_title:"No Construyas de Izquierda a Derecha",
+    lion_p1:"Imagina un rompecabezas de 1000 piezas con la cara de un león. Si lo armas de izquierda a derecha, pasarás mucho tiempo mirando hierba antes de que aparezca el león. Pero si lo armas aleatoriamente (tomando piezas donde tu interés te lleve)empezarás a ver el león al 30% de completado.",
+    lion_p2:"El vocabulario funciona igual. Intentar aprender un idioma en orden lineal y estructurado significa pasar mucho tiempo en el equivalente gramatical de la hierba. La adquisición aleatoria e impulsada por el interés (aprender palabras porque aparecieron en algo que te importaba)arma el cuadro completo más rápido.",
+    lion_p3:"Tu cerebro verá el león antes de que el rompecabezas esté terminado. Eso es comprensión. Ese es el objetivo.",
+    rocklee_tag:"⚡ El Método del Peso de Rock Lee",rocklee_title:"Entrena Por Encima de Tu Nivel a Propósito",
+    rocklee_p1:"En la serie de anime Naruto, Rock Lee entrena con enormes pesas en las piernas, para que, cuando finalmente las quita, su velocidad base sea aterradora. El principio se traduce directamente a la comprensión auditiva.",
+    rocklee_p2:"Cuando puedes seguir contenido nativo razonablemente bien, empieza a escuchar a 1,25x, luego 1,5x, luego 2x de velocidad. Se sentirá mal. Perderás cosas. Ese es el peso. Cuando vuelvas a 1x, el habla nativa se sentirá casi tranquila.",
+    rocklee_p3:"Esto también sirve como herramienta de calibración de confianza: si un asistente de voz con IA puede entender tu pronunciación a velocidad 1,5x, un humano definitivamente puede a 1x. Úsalo para ponerte a prueba sin el costo social de equivocarte frente a personas.",
+    c03_bigquote:"\"No usas un idioma para alcanzar la fluidez. Lo usas para otras cosas, y la fluidez llega como efecto secundario.\"",
+    c03_h3:"Cantidad vs. Calidad, Las Reglas que Todavía Aplican",
+    tip1:"Aprende frases, no palabras aisladas. El contexto lo es todo. Una palabra sin una frase es como una nota sin una melodía, técnicamente presente, funcionalmente inútil.",
+    tip2:"Sáltate el Google Translate. Busca imágenes. La asociación supera a la traducción siempre, quieres el concepto, no el equivalente en español en el camino.",
+    tip3:"Si no te da placer, no lo hagas. El método solo funciona si lo mantienes. La sostenibilidad requiere disfrute. Elige contenido que verías de todas formas.",
+    tip4:"El sueño es parte del método. La consolidación de la memoria (la transferencia del corto al largo plazo)ocurre durante el sueño. Una noche entera de estudio está trabajando en tu contra.",
+    tip5:"La emoción acelera la adquisición. A tu cerebro no le importan las listas de vocabulario. Le importan las cosas que hicieron que tu corazón latiera más rápido. Mira el thriller. Escucha la música. Lee lo que te mantiene despierto por la noche.",
+    tip6:"<strong>Las adquirirás naturalmente a través de la exposición abundante.</strong> Las dos mil palabras más frecuentes cubren la mayoría de las situaciones cotidianas, tu cerebro es una máquina de reconocimiento de patrones. Déjalo trabajar.",
+    c04_label:"🪖 04: El Arsenal",c04_h2:"Herramientas que <em>Realmente</em> Se Ganan Su Lugar",
+    c04_p1:"Las aplicaciones son ruedas de entrenamiento. Las buenas aceleran el inicio; las malas se convierten en un sustituto de la adquisición real. Ninguna de estas debe ser tu actividad principal, pero todas son genuinamente útiles cuando se usan correctamente.",
+    c04_mem:"Sistemas de Memoria",
+    anki_title:"Anki / SRS",anki_body:"Anki es una aplicación gratuita de tarjetas de memoria construida alrededor de un Sistema de Repetición Espaciada (SRS), un algoritmo que presenta cada tarjeta justo antes de que estés a punto de olvidarla. Una de las herramientas de memorización más efectivas jamás creadas. La curva de aprendizaje es real, pero hay excelentes tutoriales en línea. Arma un mazo de frases, no palabras aisladas, y deja que funcione.",
+    goldlist_title:"El Método Goldlist",goldlist_body:"La respuesta analógica a Anki. Escribe 20 frases al día en un cuaderno. Vuelve en dos semanas. Reescribe solo las que olvidaste. Repite hasta que no quede ninguna. Satisfactorio de una manera que tocar pantallas simplemente no lo es.",
+    resources_title:"Encontrando Recursos en Cualquier Idioma",resources_body:"Cada idioma tiene su propio ecosistema de contenido gratuito, solo necesitas saber cómo encontrarlo. Toma cualquier tema que te interese, traduce la palabra clave al idioma objetivo y busca. Suscríbete a lo que funcione. El algoritmo hará el resto.",
+    c04_input:"Máquinas de Insumo",
+    series_title:"Series y Películas",series_body:"La simulación más cercana a cómo los niños adquieren el idioma, viendo a personas hacer cosas y escuchando palabras asociadas a esas cosas. Sin doblaje. Nunca doblado. Usa subtítulos cerrados en el idioma objetivo, no en el tuyo.",
+    podcasts_title:"Podcasts",podcasts_body:"Escuchar es la habilidad más importante. Desarrolla pronunciación, comprensión y el ritmo interno del idioma. Los podcasts son práctica auditiva pura disponible en cualquier momento. Empieza en tu nivel; aplica el Método del Peso de Rock Lee conforme avanzas.",
+    social_title:"Inmersión en Redes Sociales",social_body:"Sigue hablantes nativos en el idioma objetivo. Cambia el idioma de pantalla de tu teléfono. Deja que el algoritmo te alimente con contenido en el idioma objetivo. La exposición pasiva se acumula sin requerir tiempo de estudio dedicado.",
+    c04_apps:"Aplicaciones que Vale Mencionar",
+    busuu_body:"Buena interfaz, funciones de comunidad, rastrea el vocabulario adquirido. Mejor para principiantes estructurados que necesitan andamiaje antes de ser completamente independientes.",
+    beeling_body:"Textos con audio en varios niveles de dificultad. Poderoso para la adquisición de vocabulario a través del contexto, exactamente lo que el Método Flow defiende. La lectura bilingüe construye el reconocimiento de patrones rápidamente.",
+    aivoice_title:"Modos de Voz con IA",aivoice_body:"Claude y Gemini ofrecen modos de conversación por voz que te permiten hablar en cualquier idioma, en cualquier nivel, sin juicios. Este es tu gimnasio de pronunciación. Si una IA te entiende, un humano también lo hará. Cero costo social. Máximo feedback.",
+    c04_ai:"La Capa de IA, Adición de 2026",
+    aiconv_title:"Compañeros de Conversación con IA",aiconv_body:"Claude, Gemini y otros conversarán contigo en cualquier idioma, en cualquier nivel, sin fin, sin juicios. Prepara la escena: \"Finge que eres un mesero en Barcelona. Solo responde en español. Corrige mis errores naturalmente dentro de la conversación.\" La relación paciencia/costo es insuperable.",
+    meetup_title:"Encuentros de Políglotas",meetup_body:"Encuentra eventos de intercambio de idiomas, en línea o en persona. La presión social de la conversación real es insustituible a partir de cierto punto. Plataformas como Meetup, Tandem y HelloTalk te conectan con nativos que quieren aprender tu idioma también. Trato justo.",
+    exchange_title:"Intercambio de Idiomas",exchange_body:"Tandem y HelloTalk te emparejan con hablantes nativos que quieren aprender tu idioma. Tú les enseñas una hora; ellos te enseñan una hora. No se intercambia dinero, y la autenticidad de la interacción es algo que ninguna aplicación puede replicar.",
+    c05_label:"📈 05: Sabe Dónde Estás",c05_h2:"Los Niveles <em>CEFR</em>, Traducidos al Humano",
+    c05_p1:"El Marco Común Europeo de Referencia para las Lenguas (MCER/CEFR) es el estándar internacional para medir la competencia en idiomas. Seis niveles, desde el principiante esperanzador hasta el aterradoramente competente. Saber dónde estás importa, no solo para los currículums, sino para elegir contenido en la dificultad correcta.",
+    a1:"<strong>Impresionante para tu familia.</strong> Puedes presentarte, pedir un café y contar hasta diez. Todos te felicitan. Atesora esta fase, es la última vez que será tan fácil impresionar a la gente.",
+    a2:"<strong>Turista funcional.</strong> No pasarás hambre en el extranjero. Supervivencia básica: resuelta. Cualquier cosa más compleja causa un educado \"¿Cómo dijo?\" de la otra parte y una pequeña crisis existencial tuya.",
+    b1:"<strong>Guerrero del contexto.</strong> Puedes seguir series sin subtítulos y entender la trama, incluso si no captas cada palabra. Los huecos los llena todo lo que les rodea. Aquí es donde el Método Flow empieza a sentirse como magia.",
+    b2:"<strong>Vocabulario de aproximadamente 4.000 a 6.000 palabras.</strong> Las palabras desconocidas son ahora la excepción, no la regla. El león está completamente visible. Consultas quizás el 10% de lo que encuentras, principalmente vocabulario especializado que los nativos también buscan en Google de vez en cuando.",
+    c1:"<strong>El idioma se convierte en una herramienta.</strong> Investigas cosas en él. Tu historial de YouTube está en él. Sueñas en él de vez en cuando. Ya no es un idioma extranjero, es simplemente otro idioma.",
+    c2:"<strong>Los hablantes nativos dejan de elogiarte y empiezan a corregirte.</strong> Esto es un ascenso. Has dejado de ser \"el extranjero con un inglés excelente\" y has empezado a ser \"una persona que cometió un error gramatical.\" Bienvenido. La vista desde aquí es excelente.",
+    c06_label:"⚛️ 06: La Técnica Feynman",c06_h2:"Si No Puedes Explicárselo a un <em>Niño de Seis Años</em>...",
+    c06_p1:"Richard Feynman, Premio Nobel, físico y posiblemente el mejor explicador en la historia de la ciencia, tenía una técnica para exponer la diferencia entre entender algo y simplemente reconocerlo. La distinción importa enormemente en el aprendizaje de idiomas, particularmente en la gramática.",
+    c06_callout:"\"Si no puedes explicarlo de forma sencilla, es que no lo entiendes suficientemente bien.\" atribuido a Einstein, probablemente nunca dicho por Einstein, pero preciso de todas formas.",
+    c06_p2:"Aplica esto a la gramática: siempre que <em>sientas</em> que entiendes una regla, intenta explicarla desde cero a un niño imaginario. Los lugares donde tu explicación se rompe son exactamente las lagunas en tu conocimiento. Esto es más útil que cualquier ejercicio de gramática.",
+    f1:"<strong>Elige un concepto</strong>, una regla gramatical, un tiempo verbal, una construcción que sigue haciéndote tropezar.",
+    f2:"<strong>Explícalo en voz alta</strong> como si estuvieras enseñando a un niño. Sin jerga. Sin atajos. Fuerza la simplicidad.",
+    f3:"<strong>Identifica las lagunas</strong>, los momentos en que dijiste \"bueno, es... complicado\" son los momentos en que en realidad aún no lo entiendes.",
+    f4:"<strong>Vuelve a la fuente</strong>, encuentra ejemplos auténticos del concepto en contenido real. Corrige la laguna con insumo comprensible, no con reglas abstractas.",
+    c07_label:"💬 07: Producción",c07_h2:"Cuándo Empezar a <em>Hablar</em>",
+    c07_p1:"La práctica hace permanente, no perfecto. El problema de hablar desde el primer día es que cometerás los mismos errores una y otra vez y esos errores se endurecerán en hábitos. La solución no es nunca hablar, es retrasar el habla hasta que tengas suficiente material interno desde el que hablar, en lugar de solo traducir desde tu lengua materna en tiempo real.",
+    c07_p2:"La señal de que estás listo: frases aleatorias en el idioma objetivo apareciendo en tu cabeza sin que las llames. Tu cerebro ha empezado a generar contenido. Ese es tu punto de partida.",
+    c07_h3_1:"Fase 1: Producción Interna",c07_ph1:"Piensa en el idioma. Narra tu día para ti mismo. Repite frases que escuchaste y se quedaron contigo. Elige una escena de algo que viste (un talk show, una entrevista, un discurso)y responde las preguntas en voz alta antes que el invitado. Esa frase se convierte en una plantilla que tu cerebro aplica a otras frases. Sin presión de actuación. Pura internalización de patrones.",
+    c07_h3_2:"Fase 2: Producción Estructurada Sin Audiencia",c07_ph2:"Responde preguntas de entrevistas hechas a celebridades en programas de televisión, como si fueras tú. El presentador hace una pregunta, tú respondes primero, luego ves lo que el invitado realmente dice. Tu velocidad de habla, pronunciación y tiempo de respuesta mejoran simultáneamente, en un entorno sin riesgos. Usa modos de voz con IA como puntos de verificación de pronunciación.",
+    c07_h3_3:"Fase 3: Producción en Vivo",c07_ph3:"Cuando puedes seguir la mayor parte de lo que escuchas (aproximadamente el 80% o más)estás listo para la práctica en vivo. Cambly, italki, Tandem, HelloTalk, encuentros de políglotas. Conversación real con personas reales que te escucharán mal, te corregirán y se negarán a ir más despacio. Este es el examen final, y estarás bien.",
+    c07_callout:"La mayoría de las personas que dicen haber \"estudiado un idioma durante años\" nunca lo han usado fuera de un aula. La brecha entre saber y hablar no es talento, es la simple e incómoda decisión de abrir la boca antes de sentirte listo. Toma esa decisión temprano.",
+    c08_label:"✅ 08: Eso Es Todo",c08_h2:"Tu Yo Futuro Habla <em>Varios Idiomas</em>",
+    c08_p1:"Ahora tienes el framework completo. Cuatro fases, una teoría que lo respalda, modelos mentales de cómo el vocabulario y el desarrollo auditivo realmente funcionan, herramientas clasificadas por utilidad genuina y un sistema de calibración para saber dónde estás.",
+    c08_p2:"El Método Flow no es secreto ni complejo. Es solo la aplicación consistente de algo que tu cerebro ya sabe hacer, el mismo proceso que usó para adquirir el idioma en el que estás leyendo esto. Apúntalo hacia nuevo material. Quítate del camino. Dale tiempo, sueño y contenido que ames.",
+    c08_p3:"El resto se resuelve solo. Excepto la disciplina. Esa parte la tienes que poner tú.",
+    c08_bigquote:"\"Ya sabes cómo hacer esto. Lo hiciste una vez, de bebé, sin método, sin internet y sin ningún concepto de lo que estabas haciendo. Esta vez tienes los tres.\""
+  }
+};
+
+let currentLang = 'en';
+const originals = {};
+document.querySelectorAll ('[data-key]').forEach (el => {
+  originals[el.dataset.key] = el.innerHTML;
+});
+
+function setLang (lang) {
+  if (lang === currentLang) return;
+  currentLang = lang;
+  document.querySelectorAll ('.lang-btn').forEach (b => b.classList.remove ('active'));
+  document.getElementById ('btn-' + lang).classList.add ('active');
+  const t = T[lang];
+  document.querySelectorAll ('[data-key]').forEach (el => {
+    const k = el.dataset.key;
+    if (lang === 'en') { el.innerHTML = originals[k]; }
+    else if (t && t[k] !== undefined) { el.innerHTML = t[k]; }
+  });
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : lang;
+}
+
+const reveals = document.querySelectorAll ('.reveal');
+const observer = new IntersectionObserver (entries => {
+  entries.forEach (e => { if (e.isIntersecting) e.target.classList.add ('visible'); });
+}, { threshold: 0.07 });
+reveals.forEach (el => observer.observe (el));
+</script>
+</body>
+</html>
